@@ -1,5 +1,12 @@
 class UsersController < ApplicationController
-before_action :signed_in_user, only: [:edit, :update]
+before_action :signed_in_user, only: [:edit, :update, :index, :destroy]
+before_action :correct_user,   only: [:edit, :update]
+before_action :admin_user,     only: :destroy
+  
+  def index
+    @users = User.paginate(page: params[:page])
+  end
+
   def show
   	@user = User.find(params[:id])
   end
@@ -15,17 +22,20 @@ before_action :signed_in_user, only: [:edit, :update]
   		flash[:success] = "Welcome to the Sample App!"
   		redirect_to @user
   	else
-  		flash.now[:fail] ="Are you fuckin serious? Fill in the entire form ya asshole!!"
+  		flash.now[:fail] ="Are you serious? Fill in the entire form!"
   		render 'new'
   	end
   end
 
+  def destroy
+    User.find(params[:id]).destroy
+  flash.now[:success] = "Another one bites the dust!"
+  end
+
   def edit 
-    @user = User.find(params[:id])
   end
 
   def update
-    @user = User.find(params[:id])
     if @user.update_attributes(user_params)
       flash[:success] = "Profile updated"
       redirect_to @user
@@ -41,7 +51,21 @@ before_action :signed_in_user, only: [:edit, :update]
   	params.require(:user).permit(:name, :email, :password, :password_confirmation)
   end
 
+  #Before filters
+
   def signed_in_user
-    redirect_to signin_url, notice: "Please sign in." unless signed_in?
+    unless signed_in?
+      store_location
+      redirect_to signin_url, notice: "Please sign in." unless signed_in?
+    end
+  end
+
+  def correct_user
+    @user = User.find(params[:id])
+    redirect_to(root_url) unless current_user?(@user)
+  end
+
+  def admin_user
+    redirect_to(root_url) unless current_user.admin?
   end
 end
