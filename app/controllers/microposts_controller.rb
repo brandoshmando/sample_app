@@ -22,7 +22,7 @@ before_action :correct_user, only: :destroy
     def micropost_params
       params.require(:micropost).permit(:content)
     end
-end
+
 
 private
 
