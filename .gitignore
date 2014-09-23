@@ -15,7 +15,7 @@
 /log/*.log
 /tmp
 
-# Ignore bundler config. 
+# Ignore bundler config.
 /.bundle
 
 # Ignore the default SQLite database.
@@ -27,7 +27,6 @@
 /tmp
 
 #I gnore other unneeded files.
-database.yml
 doc/
 *.swp
 *~
